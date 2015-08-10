@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name       Bitcoiner Automation
 // @author     T. Knight
-// @version    1
+// @version    2
 // @description  Automates the 'Bitcoiner' game
 // @include      http://bitcoinergame.com/
 // ==/UserScript==
@@ -19,7 +19,9 @@ setInterval(function() {
     // Find the best machine value
     var storeBTC = document.getElementsByClassName("storeBTC"),
         bestMachine = storeBTC[0].parentNode,
-        bestMachineEff = 0;
+        bestMachineEff = 0,
+        machinesOwned = Number(document.getElementById("storeOwned").innerText),
+        machinesMax = Number(document.getElementById("storeMax").innerText);
 
     for(var i=0; i<storeBTC.length; i++) {
         var machineBTC = Number(storeBTC[i].children[0].innerText);
@@ -48,7 +50,7 @@ setInterval(function() {
             }
         }
     }
-    if(bestMachine.children[3].style.color == "black") {
+    if(bestMachine.children[3].style.color == "black" && machinesOwned < machinesMax) {
         console.log("# Buying machine " + bestMachine.children[1].innerText);
         bestMachine.click();
     }
