@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name       Bitcoiner Automation
 // @author     T. Knight
-// @version    2
+// @version    3
 // @description  Automates the 'Bitcoiner' game
 // @include      http://bitcoinergame.com/
 // ==/UserScript==
@@ -24,7 +24,7 @@ setInterval(function() {
         machinesMax = Number(document.getElementById("storeMax").innerText);
 
     for(var i=0; i<storeBTC.length; i++) {
-        var machineBTC = Number(storeBTC[i].children[0].innerText);
+        var machineBTC = Number(storeBTC[i].children[0].innerText.replace(/,/g, ""));
         var machineCost;
         var machineCostText = storeBTC[i].nextSibling.innerText.substring(0, storeBTC[i].nextSibling.innerText.length - 1).replace(/,/g, "").split(" ");
         if(machineCostText[1]) {
@@ -34,6 +34,8 @@ setInterval(function() {
                 machineCost = Number(machineCostText[0]) * 1000000000;
             } else if(machineCostText[1] == "trillion") {
                 machineCost = Number(machineCostText[0]) * 1000000000000;
+            } else if(machineCostText[1] == "quadrillion") {
+                machineCost = Number(machineCostText[0]) * 1000000000000000;
             } else {
                 machineCost = Number(machineCostText[0]);
             }
@@ -61,6 +63,15 @@ setInterval(function() {
         console.log("# Clicked random event");
         randomEvent.click();
     }
+
+    // Display note messages in console
+    /*
+    var noteElement = document.getElementById("notes");
+    if(noteElement.children[0] && noteElement.children[0].innerText != noteText) {
+        var noteText = document.getElementById(noteElement.children[0].innerText);
+        console.log("# Note: " + noteElement.children[0].children[0].innerText + " - " + noteText);
+    }
+    */
 
     // Get current BTC price
     var currentPriceElement = document.getElementById("btcusd");
