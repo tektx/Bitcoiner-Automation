@@ -1,22 +1,30 @@
 // ==UserScript==
 // @name       Bitcoiner Automation
 // @author     T. Knight
-// @version    4
+// @version    5
 // @description  Automates the 'Bitcoiner' game
 // @include      http://bitcoinergame.com/
 // ==/UserScript==
 
 var delayValue = 50;
 
+// Recursively calculate the -illion numbers
+function getBigNumber(num) {
+    if(num <= 1) {
+        return 1000;
+    } else {
+        return getBigNumber(num-1) * 1000;
+    }
+}
+
 function parseNumber(string) {
     var getValue = string.split(" ");
     getValue[0] = Number(getValue[0].replace(/,/g, "").replace(/\$/g, ""));
-    if(getValue[1] == "million") { getValue[0] = getValue[0] * 1000000; }
-    else if(getValue[1] == "billion") { getValue[0] = getValue[0] * 1000000000; }
-    else if(getValue[1] == "trillion") { getValue[0] = getValue[0] * 1000000000000; }
-    else if(getValue[1] == "quadrillion") { getValue[0] = getValue[0] * 1000000000000000; }
-    else if(getValue[1] == "quintillion") { getValue[0] = getValue[0] * 1000000000000000000; }
-    //console.log("Eff: " + getValue[0]);
+    if(getValue[1] == "million") { getValue[0] = getValue[0] * getBigNumber(2); }
+    else if(getValue[1] == "billion") { getValue[0] = getValue[0] * getBigNumber(3); }
+    else if(getValue[1] == "trillion") { getValue[0] = getValue[0] * getBigNumber(4); }
+    else if(getValue[1] == "quadrillion") { getValue[0] = getValue[0] * getBigNumber(5); }
+    else if(getValue[1] == "quintillion") { getValue[0] = getValue[0] * getBigNumber(6); }
     return getValue[0];
 }
 
