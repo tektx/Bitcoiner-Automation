@@ -1,12 +1,24 @@
 // ==UserScript==
 // @name       Bitcoiner Automation
 // @author     T. Knight
-// @version    3
+// @version    4
 // @description  Automates the 'Bitcoiner' game
 // @include      http://bitcoinergame.com/
 // ==/UserScript==
 
 var delayValue = 50;
+
+function parseNumber(string) {
+    var getValue = string.split(" ");
+    getValue[0] = Number(getValue[0].replace(/,/g, "").replace(/\$/g, ""));
+    if(getValue[1] == "million") { getValue[0] = getValue[0] * 1000000; }
+    else if(getValue[1] == "billion") { getValue[0] = getValue[0] * 1000000000; }
+    else if(getValue[1] == "trillion") { getValue[0] = getValue[0] * 1000000000000; }
+    else if(getValue[1] == "quadrillion") { getValue[0] = getValue[0] * 1000000000000000; }
+    else if(getValue[1] == "quintillion") { getValue[0] = getValue[0] * 1000000000000000000; }
+    //console.log("Eff: " + getValue[0]);
+    return getValue[0];
+}
 
 // Main
 setInterval(function() {
@@ -16,6 +28,7 @@ setInterval(function() {
 }, delayValue);
 
 setInterval(function() {
+    var machineBTC, machineCost, machineEfficiency;
     // Find the best machine value
     var storeBTC = document.getElementsByClassName("storeBTC"),
         bestMachine = storeBTC[0].parentNode,
@@ -24,23 +37,10 @@ setInterval(function() {
         machinesMax = Number(document.getElementById("storeMax").innerText);
 
     for(var i=0; i<storeBTC.length; i++) {
-        var machineBTC = Number(storeBTC[i].children[0].innerText.replace(/,/g, ""));
-        var machineCost;
-        var machineCostText = storeBTC[i].nextSibling.innerText.substring(0, storeBTC[i].nextSibling.innerText.length - 1).replace(/,/g, "").split(" ");
-        if(machineCostText[1]) {
-            if(machineCostText[1] == "million") {
-                machineCost = Number(machineCostText[0]) * 1000000;
-            } else if(machineCostText[1] == "billion") {
-                machineCost = Number(machineCostText[0]) * 1000000000;
-            } else if(machineCostText[1] == "trillion") {
-                machineCost = Number(machineCostText[0]) * 1000000000000;
-            } else if(machineCostText[1] == "quadrillion") {
-                machineCost = Number(machineCostText[0]) * 1000000000000000;
-            } else {
-                machineCost = Number(machineCostText[0]);
-            }
-        }
-        var machineEfficiency = machineBTC / machineCost;
+        //var machineBTC = Number(storeBTC[i].children[0].innerText.replace(/,/g, ""));
+        machineBTC = parseNumber(storeBTC[i].children[0].innerText);
+        machineCost = parseNumber(storeBTC[i].nextSibling.innerText);
+        machineEfficiency = machineBTC / machineCost;
         if(!isNaN(machineBTC) && !isNaN(machineCost)) {
             if(machineEfficiency > bestMachineEff) {
                 bestMachine.style.backgroundColor = 'transparent';
@@ -53,7 +53,7 @@ setInterval(function() {
         }
     }
     if(bestMachine.children[3].style.color == "black" && machinesOwned < machinesMax) {
-        console.log("# Buying machine " + bestMachine.children[1].innerText);
+        console.log("# Buying machine " + bestMachine.children[1].innerText + " | Eff: " + bestMachineEff);
         bestMachine.click();
     }
 
