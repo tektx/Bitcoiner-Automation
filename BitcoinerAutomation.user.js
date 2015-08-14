@@ -28,6 +28,16 @@ function parseNumber(string) {
     return getValue[0];
 }
 
+function doResearch() {
+    var availableResearch = $('.res').children();
+    for(var i=0; i<availableResearch.length; i++) {
+        if(availableResearch[i].css('background-color') == 'rgb(223,237,180)') {
+            console.log("# Researching " + availableResearch[i].children[0].children[0].innerText);
+            availableResearch[i].click();
+        }
+    }
+}
+
 // Main
 setInterval(function() {
     // Autoclick the 'Hack Some Dollars' button
@@ -91,4 +101,6 @@ setInterval(function() {
     } else {
         currentPriceElement.style.color = 'black';
     }
+
+    //doResearch();
 }, 2000);
