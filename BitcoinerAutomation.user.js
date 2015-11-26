@@ -1,12 +1,26 @@
 // ==UserScript==
 // @name       Bitcoiner Automation
 // @author     T. Knight
-// @version    5
+// @version    6
 // @description  Automates the 'Bitcoiner' game
 // @include      http://bitcoinergame.com/
 // ==/UserScript==
 
 var delayValue = 50;
+var machines = [document.getElementById("zuse"),
+                document.getElementById("intelc4004"),
+                document.getElementById("atimach64"),
+                document.getElementById("intelpentium2"),
+                document.getElementById("amdathlonk7"),
+                document.getElementById("dreidfxvodoo"),
+                document.getElementById("intelcore2duo"),
+                document.getElementById("intelxeinnehalem"),
+                document.getElementById("amdbulldozer"),
+                document.getElementById("amd7990"),
+                document.getElementById("usbasicminer"),
+                document.getElementById("ibmroadrunner"),
+                document.getElementById("tianhe2"),
+                document.getElementById("kimdotcom")];
 
 // Recursively calculate the -illion numbers
 function getBigNumber(num) {
@@ -20,11 +34,16 @@ function getBigNumber(num) {
 function parseNumber(string) {
     var getValue = string.split(" ");
     getValue[0] = Number(getValue[0].replace(/,/g, "").replace(/\$/g, ""));
-    if(getValue[1] == "million") { getValue[0] = getValue[0] * getBigNumber(2); }
-    else if(getValue[1] == "billion") { getValue[0] = getValue[0] * getBigNumber(3); }
-    else if(getValue[1] == "trillion") { getValue[0] = getValue[0] * getBigNumber(4); }
-    else if(getValue[1] == "quadrillion") { getValue[0] = getValue[0] * getBigNumber(5); }
-    else if(getValue[1] == "quintillion") { getValue[0] = getValue[0] * getBigNumber(6); }
+    if(getValue[1] === "million") { getValue[0] = getValue[0] * getBigNumber(2); }
+    else if(getValue[1] === "billion") { getValue[0] = getValue[0] * getBigNumber(3); }
+    else if(getValue[1] === "trillion") { getValue[0] = getValue[0] * getBigNumber(4); }
+    else if(getValue[1] === "quadrillion") { getValue[0] = getValue[0] * getBigNumber(5); }
+    else if(getValue[1] === "quintillion") { getValue[0] = getValue[0] * getBigNumber(6); }
+    else if(getValue[1] === "sextillion") { getValue[0] = getValue[0] * getBigNumber(7); }
+    else if(getValue[1] === "septillion") { getValue[0] = getValue[0] * getBigNumber(8); }
+    else if(getValue[1] === "octillion") { getValue[0] = getValue[0] * getBigNumber(9); }
+    else if(getValue[1] === "nonillion") { getValue[0] = getValue[0] * getBigNumber(10); }
+    else if(getValue[1] === "decillion") { getValue[0] = getValue[0] * getBigNumber(11); }
     return getValue[0];
 }
 
@@ -38,6 +57,10 @@ function doResearch() {
     }
 }
 
+function isElementHidden(element) {
+    return (element.offsetParent === null);
+}
+
 // Main
 setInterval(function() {
     // Autoclick the 'Hack Some Dollars' button
@@ -46,13 +69,13 @@ setInterval(function() {
 }, delayValue);
 
 setInterval(function() {
-    var machineBTC, machineCost, machineEfficiency;
-    // Find the best machine value
     var storeBTC = document.getElementsByClassName("storeBTC"),
         bestMachine = storeBTC[0].parentNode,
         bestMachineEff = 0,
         machinesOwned = Number(document.getElementById("storeOwned").innerText),
-        machinesMax = Number(document.getElementById("storeMax").innerText);
+        machinesMax = Number(document.getElementById("storeMax").innerText),
+        isRigTab = document.getElementById("storeAll").style.display === "block" ? true : false,
+        machineBTC, machineCost, machineEfficiency;
 
     for(var i=0; i<storeBTC.length; i++) {
         //var machineBTC = Number(storeBTC[i].children[0].innerText.replace(/,/g, ""));
@@ -60,7 +83,7 @@ setInterval(function() {
         machineCost = parseNumber(storeBTC[i].nextSibling.innerText);
         machineEfficiency = machineBTC / machineCost;
         if(!isNaN(machineBTC) && !isNaN(machineCost)) {
-            if(machineEfficiency > bestMachineEff) {
+            if(machineEfficiency > bestMachineEff && !isElementHidden(storeBTC[i])) {
                 bestMachine.style.backgroundColor = 'transparent';
                 bestMachine = storeBTC[i].parentNode;
                 bestMachineEff = machineEfficiency;
@@ -70,7 +93,7 @@ setInterval(function() {
             }
         }
     }
-    if(bestMachine.children[3].style.color == "black" && machinesOwned < machinesMax) {
+    if(bestMachine.children[3].style.color == "black" && machinesOwned < machinesMax && isRigTab) {
         console.log("# Buying machine " + bestMachine.children[1].innerText + " | Eff: " + bestMachineEff);
         bestMachine.click();
     }
@@ -103,4 +126,4 @@ setInterval(function() {
     }
 
     //doResearch();
-}, 2000);
+}, 500);
