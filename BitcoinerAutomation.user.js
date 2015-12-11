@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name       Bitcoiner Automation
 // @author     T. Knight
-// @version    7
+// @version    8
 // @description  Automates the 'Bitcoiner' game
 // @include      http://bitcoinergame.com/
 // ==/UserScript==
@@ -72,17 +72,23 @@ setInterval(function() {
       machinesOwned = Number(document.getElementById("storeOwned").innerText),
       machinesMax = Number(document.getElementById("storeMax").innerText),
       isRigTab = document.getElementById("storeAll").style.display === "block" ? true : false,
-      machineBTC, machineCost, machineEfficiency;
+      machineBTCString, machineBTC, machineCost, machineEfficiency;
 
   // Autoclick the 'Hack Some Dollars' button
   hackButton.click();
 
   for(var i=0; i<storeBTC.length; i++) {
     //var machineBTC = Number(storeBTC[i].children[0].innerText.replace(/,/g, ""));
-    machineBTC = parseNumber(storeBTC[i].children[0].innerText);
+    machineBTCString = storeBTC[i].children[0].innerText;
+    machineBTC = parseNumber(machineBTCString);
     machineCost = parseNumber(storeBTC[i].nextSibling.innerText);
     machineEfficiency = machineBTC / machineCost;
     if(!isNaN(machineBTC) && !isNaN(machineCost)) {
+      if(machineBTCString.indexOf("million") > -1) {
+        machineBTC = machineBTC * 1000000;
+      } else if(machineBTCString.indexOf("billion") > -1) {
+        machineBTC = machineBTC * 1000000000;
+      }
       if(machineEfficiency > bestMachineEff && !isElementHidden(storeBTC[i])) {
         bestMachine.style.backgroundColor = 'transparent';
         bestMachine = storeBTC[i].parentNode;
