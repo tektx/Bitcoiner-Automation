@@ -99,14 +99,14 @@ setInterval(function() {
       }
     }
   }
-  if(bestMachine.children[3].style.color == "black" && machinesOwned < machinesMax && isRigTab) {
+  if(bestMachine.children[3].style.color === "black" && machinesOwned < machinesMax && isRigTab) {
     //console.log("# Buying machine " + bestMachine.children[1].innerText + " | Eff: " + bestMachineEff);
     bestMachine.click();
   }
 
   // Click 'randomEvent()' buttons
   var randomEvent = document.getElementById("randomButton");
-  if(randomEvent.style.display == 'block') {
+  if(randomEvent.style.display === "block") {
     //console.log("# Clicked random event");
     randomEvent.click();
   }
@@ -121,13 +121,17 @@ setInterval(function() {
   */
 
   //setBitcoinPriceColor();
+  var sellAllButton = document.getElementById("sell_100");
+  if(getCurrentPrice() > 800) {
+    sellAllButton.click();
+  }
 
   //doResearch();
 }, delayValue);
 
 function setBitcoinPriceColor() {
   var currentPriceElement = document.getElementById("btcusd");
-  var currentPrice = Number(currentPriceElement.innerText.split("$")[0]);
+  var currentPrice = getCurrentPrice();
   if(currentPrice > 800) {
     currentPriceElement.style.color = 'green';
   } else if(currentPrice < 600) {
@@ -135,4 +139,11 @@ function setBitcoinPriceColor() {
   } else {
     currentPriceElement.style.color = 'black';
   }
+}
+
+function getCurrentPrice() {
+  // Get the current Bitcoin price
+  var currentPriceElement = document.getElementById("btcusd");
+  var currentPrice = Number(currentPriceElement.innerText.split("$")[1].substring(0,6));
+  return currentPrice;
 }
